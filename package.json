@@ -1,0 +1,19 @@
+{
+  "name": "dify-save-wecom",
+  "version": "1.0.0",
+  "description": "微信企业级智能客服后台服务配置页面",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "element-plus": "^2.3.8",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.0"
+  }
+}

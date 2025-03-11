@@ -1,0 +1,30 @@
+# 基础依赖
+fastapi>=0.68.0
+uvicorn>=0.15.0
+pydantic>=1.8.2
+python-dotenv>=0.19.0
+
+# 数据库
+mysql-connector-python>=8.0.26
+pymongo>=3.12.0
+redis>=4.0.0
+
+# 微信企业号SDK
+wechatpy>=1.8.15
+cryptography>=3.4.7
+
+# 消息队列
+pika>=1.2.0
+
+# HTTP客户端
+requests>=2.26.0
+aiohttp>=3.8.0
+
+# 工具库
+python-jose>=3.3.0
+passlib>=1.7.4
+python-multipart>=0.0.5
+
+# 测试
+pytest>=6.2.5
+pytest-cov>=2.12.1
