@@ -1,11 +1,14 @@
 from typing import Dict, Optional
 from fastapi import APIRouter, Request, HTTPException
 from wechatpy.enterprise.crypto import WeChatCrypto
-from wechatpy.exceptions import InvalidSignatureError
+# from wechatpy.exceptions import InvalidSignatureError
 from wechatpy.enterprise.messages import TextMessage
 from wechatpy.enterprise.replies import TextReply
 from dotenv import load_dotenv
 import os
+
+# 导入Dify客户端
+from src.dify.client import DifyClient
 
 # 加载环境变量
 load_dotenv()
@@ -19,6 +22,9 @@ crypto = WeChatCrypto(
     encoding_aes_key=os.getenv("WECHAT_ENCODING_AES_KEY"),
     corp_id=os.getenv("WECHAT_CORP_ID")
 )
+
+# 初始化Dify客户端
+dify_client = DifyClient()
 
 @router.post("/callback")
 async def handle_message(request: Request):
@@ -45,8 +51,9 @@ async def handle_message(request: Request):
         # 解析消息
         msg = TextMessage.from_xml(decrypted_xml)
         
-        # TODO: 调用Dify API处理消息
-        reply_content = f"收到消息：{msg.content}"
+        # 调用Dify API处理消息
+        response_data = dify_client.send_message(user_id=msg.source, message=msg.content)
+        reply_content = dify_client.get_reply(response_data)
         
         # 构造回复
         reply = TextReply(
@@ -63,8 +70,8 @@ async def handle_message(request: Request):
         
         return encrypted_reply
         
-    except InvalidSignatureError:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+    # except InvalidSignatureError:
+    #     raise HTTPException(status_code=400, detail="Invalid signature")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -84,7 +91,7 @@ def verify_url(
             nonce
         )
         return decrypted_echo
-    except InvalidSignatureError:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+    # except InvalidSignatureError:
+    #     raise HTTPException(status_code=400, detail="Invalid signature")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -48,6 +48,10 @@ class DifyClient:
             payload['conversation_id'] = conversation_id
         
         try:
+            # 确保 api_url 不为 None
+            if not self.api_url:
+                raise ValueError("DIFY_API_URL 不能为空")
+                
             response = requests.post(self.api_url, headers=headers, json=payload)
             response.raise_for_status()  # 抛出HTTP错误
             
@@ -57,6 +61,12 @@ class DifyClient:
             return {
                 'error': True,
                 'message': f"请求Dify API失败: {str(e)}"
+            }
+        except ValueError as e:
+            # 处理 URL 为空的情况
+            return {
+                'error': True,
+                'message': str(e)
             }
     
     def get_reply(self, response_data: Dict[str, Any]) -> str:

@@ -22,7 +22,7 @@
 
 - [ ] Dify API集成
 
-  ```python:src/wecom/message.py:48-49
+  ```python:src/IM/wecom/message.py:48-49
   # 替换占位代码（当前行48-49）
   # TODO: 调用Dify API处理消息
   reply_content = await dify_client.query(msg.content, user_id=msg.from_user)
