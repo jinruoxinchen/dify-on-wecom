@@ -1,0 +1,75 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.python
+#1 transferring dockerfile: 1.20kB 0.0s done
+#1 DONE 1.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.9-slim
+#2 DONE 0.8s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/11] FROM docker.io/library/python:3.9-slim@sha256:e52ca5f579cc58fed41efcbb55a0ed5dccf6c7a156cba76acfb4ab42fc19dd00
+#4 DONE 0.0s
+
+#5 [ 2/11] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 8.86kB 0.0s done
+#6 DONE 0.1s
+
+#7 [ 3/11] RUN apt-get update && apt-get install -y     gcc     python3-dev     libssl-dev     && rm -rf /var/lib/apt/lists/*
+#7 0.899 Ign:1 http://deb.debian.org/debian bookworm InRelease
+#7 0.899 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+#7 0.899 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+#7 1.905 Ign:1 http://deb.debian.org/debian bookworm InRelease
+#7 1.905 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+#7 1.905 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+#7 3.924 Ign:1 http://deb.debian.org/debian bookworm InRelease
+#7 3.926 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+#7 3.926 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+#7 7.935 Err:1 http://deb.debian.org/debian bookworm InRelease
+#7 7.935   Could not connect to 127.0.0.1:8118 (127.0.0.1). - connect (111: Connection refused)
+#7 7.935 Err:2 http://deb.debian.org/debian bookworm-updates InRelease
+#7 7.935   Unable to connect to 127.0.0.1:8118:
+#7 7.935 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+#7 7.935   Unable to connect to 127.0.0.1:8118:
+#7 7.948 Reading package lists...
+#7 7.965 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm/InRelease  Could not connect to 127.0.0.1:8118 (127.0.0.1). - connect (111: Connection refused)
+#7 7.965 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm-updates/InRelease  Unable to connect to 127.0.0.1:8118:
+#7 7.965 W: Failed to fetch http://deb.debian.org/debian-security/dists/bookworm-security/InRelease  Unable to connect to 127.0.0.1:8118:
+#7 7.965 W: Some index files failed to download. They have been ignored, or old ones used instead.
+#7 8.000 Reading package lists...
+#7 8.012 Building dependency tree...
+#7 8.013 Reading state information...
+#7 8.014 E: Unable to locate package gcc
+#7 8.014 E: Unable to locate package python3-dev
+#7 8.014 E: Unable to locate package libssl-dev
+#7 ERROR: process "/bin/sh -c apt-get update && apt-get install -y     gcc     python3-dev     libssl-dev     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+------
+ > [ 3/11] RUN apt-get update && apt-get install -y     gcc     python3-dev     libssl-dev     && rm -rf /var/lib/apt/lists/*:
+7.965 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm/InRelease  Could not connect to 127.0.0.1:8118 (127.0.0.1). - connect (111: Connection refused)
+7.965 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm-updates/InRelease  Unable to connect to 127.0.0.1:8118:
+7.965 W: Failed to fetch http://deb.debian.org/debian-security/dists/bookworm-security/InRelease  Unable to connect to 127.0.0.1:8118:
+7.965 W: Some index files failed to download. They have been ignored, or old ones used instead.
+8.000 Reading package lists...
+8.012 Building dependency tree...
+8.013 Reading state information...
+8.014 E: Unable to locate package gcc
+8.014 E: Unable to locate package python3-dev
+8.014 E: Unable to locate package libssl-dev
+------
+Dockerfile.python:12
+--------------------
+  11 |     # 安装系统依赖和构建工具
+  12 | >>> RUN apt-get update && apt-get install -y \
+  13 | >>>     gcc \
+  14 | >>>     python3-dev \
+  15 | >>>     libssl-dev \
+  16 | >>>     && rm -rf /var/lib/apt/lists/*
+  17 |     
+--------------------
+ERROR: failed to solve: process "/bin/sh -c apt-get update && apt-get install -y     gcc     python3-dev     libssl-dev     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dify-on-WeChat 测试页面</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #1e88e5;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .status-box {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #1e88e5;
+            background-color: #f8f9fa;
+        }
+        .service {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .service-name {
+            font-weight: bold;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+        .running {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .stopped {
+            background-color: #ffcdd2;
+            color: #c62828;
+        }
+        .unknown {
+            background-color: #fff9c4;
+            color: #f57f17;
+        }
+        button {
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        .test-suite {
+            margin: 20px 0;
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .test-case:hover {
+            background-color: #e3f2fd;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            display: none;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .test-failed {
+            background-color: #ffebee;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dify-on-WeChat 测试页面</h1>
+        </header>
+        
+        <div class="content">
+            <div class="status-box">
+                <p>此页面用于测试 Dify-on-WeChat 部署状态。如果您能看到此页面，表示前端服务已成功部署！</p>
+            </div>
+            
+            <h2>服务状态</h2>
+            <div class="services">
+                <div class="service">
+                    <span class="service-name">前端服务</span>
+                    <span class="status running">运行中</span>
+                </div>
+                <div class="service">
+                    <span class="service-name">后端服务</span>
+                    <span class="status unknown" id="backend-status">检查中...</span>
+                </div>
+                <div class="service">
+                    <span class="service-name">RabbitMQ</span>
+                    <span class="status unknown" id="rabbitmq-status">检查中...</span>
+                </div>
+                <div class="service">
+                    <span class="service-name">个微服务</span>
+                    <span class="status unknown" id="gewechat-status">检查中...</span>
+                </div>
+            </div>
+            
+            <button id="check-status">刷新状态</button>
+            
+            <h2>API 测试</h2>
+            <div class="test-suite">
+                <div class="test-case" onclick="toggleTestResult('health-test')">
+                    <div>测试健康检查接口</div>
+                    <div class="test-result" id="health-test">
+                        结果将在这里显示...
+                    </div>
+                </div>
+                <div class="test-case" onclick="toggleTestResult('wecom-test')">
+                    <div>测试企业微信回调</div>
+                    <div class="test-result" id="wecom-test">
+                        结果将在这里显示...
+                    </div>
+                </div>
+                <div class="test-case" onclick="toggleTestResult('rabbitmq-test')">
+                    <div>测试RabbitMQ状态</div>
+                    <div class="test-result" id="rabbitmq-test">
+                        结果将在这里显示...
+                    </div>
+                </div>
+            </div>
+            
+            <button id="run-all-tests">运行所有测试</button>
+            
+            <h2>环境信息</h2>
+            <div id="env-info">
+                <p>配置环境: <span id="env-type">加载中...</span></p>
+                <p>Docker容器: <span id="container-count">加载中...</span></p>
+                <p>页面加载时间: <span id="load-time"></span></p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 Dify-on-WeChat 测试页面 | 构建时间: 2025-03-23</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 获取当前时间
+        document.getElementById('load-time').textContent = new Date().toLocaleString();
+        
+        // 模拟环境信息
+        setTimeout(() => {
+            document.getElementById('env-type').textContent = 'Development';
+            document.getElementById('container-count').textContent = '4 个运行中';
+        }, 1000);
+        
+        // 模拟服务状态检查
+        function checkServiceStatus() {
+            // 这里应该是真实的API调用，为了演示使用随机结果
+            setTimeout(() => {
+                const backendStatus = Math.random() > 0.3 ? 'running' : 'stopped';
+                const rabbitmqStatus = Math.random() > 0.3 ? 'running' : 'stopped';
+                const gewechatStatus = Math.random() > 0.3 ? 'running' : 'stopped';
+                
+                updateStatus('backend-status', backendStatus);
+                updateStatus('rabbitmq-status', rabbitmqStatus);
+                updateStatus('gewechat-status', gewechatStatus);
+            }, 1500);
+        }
+        
+        function updateStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            element.className = 'status ' + status;
+            element.textContent = status === 'running' ? '运行中' : '已停止';
+        }
+        
+        // 初始检查
+        checkServiceStatus();
+        
+        // 刷新按钮
+        document.getElementById('check-status').addEventListener('click', () => {
+            const statuses = document.querySelectorAll('.status:not(.running):not(.stopped)');
+            statuses.forEach(status => {
+                status.className = 'status unknown';
+                status.textContent = '检查中...';
+            });
+            
+            checkServiceStatus();
+        });
+        
+        // 切换测试结果显示
+        function toggleTestResult(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'block') {
+                element.style.display = 'none';
+            } else {
+                element.style.display = 'block';
+            }
+        }
+        
+        // 运行测试
+        function runTest(id, endpoint, expectedStatus) {
+            const resultElement = document.getElementById(id);
+            resultElement.textContent = '测试中...';
+            resultElement.style.display = 'block';
+            resultElement.className = 'test-result';
+            
+            // 这里应该是真实的API调用，为了演示使用随机结果
+            setTimeout(() => {
+                const success = Math.random() > 0.3;
+                if (success) {
+                    resultElement.textContent = `成功! 端点 ${endpoint} 返回状态码 ${expectedStatus}`;
+                } else {
+                    resultElement.textContent = `失败! 端点 ${endpoint} 无法访问`;
+                    resultElement.className = 'test-result test-failed';
+                }
+            }, 1000);
+        }
+        
+        // 运行所有测试按钮
+        document.getElementById('run-all-tests').addEventListener('click', () => {
+            runTest('health-test', '/health', 200);
+            runTest('wecom-test', '/wecom/callback', 200);
+            runTest('rabbitmq-test', '/管理界面', 200);
+        });
+    </script>
+</body>
+</html>

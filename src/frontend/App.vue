@@ -7,6 +7,15 @@
         </div>
       </template>
       
+      <!-- Gewechat登录区域 -->
+      <div class="gewechat-login-section">
+        <h3>微信个人号登录</h3>
+        <p class="section-description">扫描二维码登录微信，系统将自动保存登录配置</p>
+        <GewechatLogin @login-success="handleGewechatLoginSuccess" />
+      </div>
+
+      <el-divider />
+      
       <!-- Dify配置区域 -->
       <el-form :model="difyConfig" label-width="120px" class="config-form">
         <h3>Dify配置</h3>
@@ -58,9 +67,13 @@
 <script>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
+import GewechatLogin from './components/GewechatLogin.vue'
 
 export default {
   name: 'ConfigApp',
+  components: {
+    GewechatLogin
+  },
   setup() {
     // Dify配置
     const difyConfig = reactive({
@@ -137,6 +150,12 @@ export default {
         console.error('保存企业微信配置失败:', error)
       }
     }
+
+    // 处理Gewechat登录成功事件
+    const handleGewechatLoginSuccess = (config) => {
+      showDialog('成功', '微信登录成功并已保存配置信息')
+      console.log('Gewechat登录成功，配置信息：', config)
+    }
     
     // 组件挂载时加载配置
     onMounted(() => {
@@ -150,7 +169,8 @@ export default {
       dialogTitle,
       dialogMessage,
       saveDifyConfig,
-      saveWecomConfig
+      saveWecomConfig,
+      handleGewechatLoginSuccess
     }
   }
 }
@@ -179,5 +199,15 @@ export default {
 
 .el-divider {
   margin: 30px 0;
+}
+
+.gewechat-login-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.section-description {
+  color: #666;
+  margin-bottom: 20px;
 }
 </style>

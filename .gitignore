@@ -1,0 +1,7 @@
+# 原有内容保持不变
+node_modules/
+dist/
+.env
+
+# 新增配置保护
+config/wecom.yml

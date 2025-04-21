@@ -1,0 +1,67 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# 设置pip不使用缓存并信任pypi源
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+# 清除可能存在的代理设置
+ENV http_proxy="http://127.0.0.1:8118"
+ENV https_proxy="http://127.0.0.1:8118"
+# 配置国内镜像源并安装系统依赖
+# 直接使用清华源创建sources.list（原基础镜像无此文件）
+RUN echo "deb http://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free" > /etc/apt/sources.list \
+    && echo "deb http://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free" >> /etc/apt/sources.list
+
+# 安装基础工具和构建依赖
+RUN unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gcc \
+        python3-dev \
+        libssl-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 使用宿主机的pip缓存加速安装
+# RUN mkdir -p /root/.cache/pip
+# VOLUME /root/.cache/pip
+
+# 测试网络连通性
+# RUN curl -I --connect-timeout 30 https://pypi.tuna.tsinghua.edu.cn/simple || true
+
+# 安装依赖（带重试和备用镜像源）
+COPY requirements.txt .
+# RUN pip install \
+#     --no-cache-dir \
+#     --retries 5 \
+#     --timeout 60 \
+#     -i https://pypi.tuna.tsinghua.edu.cn/simple \
+#     -i https://mirrors.aliyun.com/pypi/simple/ \
+#     -r requirements.txt
+
+RUN pip install \
+    --no-cache-dir \
+    --retries 5 \
+    --timeout 60 \
+    -i https://pypi.org/simple \
+    -r requirements.txt
+
+# 清理构建依赖
+RUN apt-get purge -y gcc python3-dev && apt-get autoremove -y
+
+# 复制应用代码
+COPY src/ ./src/
+COPY src/test_server.py ./main.py
+
+# 创建日志目录
+RUN mkdir -p logs
+
+# 暴露端口
+EXPOSE 8000
+
+# 启动命令
+CMD ["python", "main.py"]

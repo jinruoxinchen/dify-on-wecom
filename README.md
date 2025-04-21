@@ -93,7 +93,9 @@ graph TD
 
 ## 五、模块设计
 
-### 1. 微信企业号对接模块
+### 1. IM平台对接
+
+#### 1. 微信企业号对接模块
 
   * **功能描述** ：实现企业微信用户与智能客服的通信，接收用户消息并发送回复。
   * **对接流程** ：
@@ -115,6 +117,35 @@ graph TD
             # 处理异常
             return None
     ```
+
+#### 2. 支持gewechat登录微信
+
+基于[Gewechat](https://github.com/Devo919/Gewechat)项目实现的微信个人号通道,使用ipad协议登录,相比itchat协议更稳定。
+
+> 1. gewechat要求必须搭建服务到**同省服务器**或者电脑里方可正常使用
+> 2. 此项目仅用于个人娱乐场景，请勿用于任何商业场景
+>
+> ⚠️注意目前channel_type: "wx" 对应的 itchat无法使用，请更换为gewechat
+
+dify-on-wechat、dify、gewechat服务的调用关系
+
+<div align="center">
+<img width="700" src="./docs/gewechat/gewechat_service_design.png">
+</div>
+
+### 快速启动gewechat机器人
+
+#### 部署gewechat服务
+
+```bash
+# 从阿里云镜像仓库拉取(国内)
+docker pull registry.cn-chengdu.aliyuncs.com/tu1h/wechotd:alpine
+docker tag registry.cn-chengdu.aliyuncs.com/tu1h/wechotd:alpine gewe
+
+# 创建数据目录并启动服务
+mkdir -p gewechat/data  
+docker run -it -v ./gewechat/data:/root/temp -p 2531:2531 -p 2532:2532 --restart=always --name=gewe --network=host gewe
+```
 
 ### 2. Dify API 对接模块
 
